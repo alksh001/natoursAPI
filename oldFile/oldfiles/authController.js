@@ -37,6 +37,15 @@ exports.signup = catchAsync(async (req, res, next) => {
 
     createSendToken(newUser, 201, res);
 
+    // const token = signToken(newUser._id);
+
+    // res.status(201).json({
+    //     status: 'success',
+    //     token,
+    //     data: {
+    //         user: newUser
+    //     }
+    // });
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -55,6 +64,12 @@ exports.login = catchAsync(async (req, res, next) => {
 
     createSendToken(user, 200, res);
 
+    // const token = signToken(user._id);
+    // res.status(200).json({
+    //     status: 'success',
+    //     token,
+    // });
+    
 });
 
 
@@ -173,6 +188,12 @@ exports.resetPassowrd = catchAsync(async (req, res, next) => {
 
     createSendToken(user, 200, res);
 
+    // const token = signToken(user._id);
+
+    // return res.status(200).json({
+    //     status: 'success',
+    //     token
+    // });
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -196,4 +217,11 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // Login and send jwt
     createSendToken(user, 200, res);
 
+    // const token = signToken(user._id);
+    // console.log({token});
+
+    // res.status(200).json({
+    //     status: 'success',
+    //     token
+    // });
 });
