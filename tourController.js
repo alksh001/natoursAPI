@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const APIFeatures = require('./utils/apiFeatures')
 const Tour = require('./models/tourModel');
 const catchAsync = require('./utils/catchAsync')
@@ -30,9 +31,29 @@ const getAllTours = catchAsync(async (req, res, next) => {
         });
 });
 
-const getTour = catchAsync(async (req, res,next) => {
-   
-    const tour = await Tour.findById(req.params.id);
+const getTour = catchAsync(async (req, res, next) =>
+{  
+    const tour = await Tour.findById(req.params.id).populate('reviews');
+
+    // ********* OR We can do it like *************
+    // const tour = await Tour.aggregate([
+    //     {
+    //         $match : {_id: new mongoose.Types.ObjectId(req.params.id)}
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: 'reviews',
+    //             localField: '_id',
+    //             foreignField: 'tour',
+    //             as: 'reviews'
+    //         }
+    //     }
+    // ])
+    
+    // const tour = await Tour.findById(req.params.id).populate({
+    //     path: 'guides',
+    //     select: '-__v -passwordChangedAt'
+    // });
     
     if (!tour) {
         return next(new AppError('No tour found with that ID', 404));

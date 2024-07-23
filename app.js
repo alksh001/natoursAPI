@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -10,8 +11,16 @@ const route = require('./routes')
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const userRoute = require('./routes/userRoute');
+const reviewRoute = require('./routes/reviewRoute');
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// 1 Global middlewares
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // set security http headers
 app.use(helmet());
@@ -41,8 +50,6 @@ app.use(hpp({
     whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficuty', 'price']
 }));
 
-app.use(express.static(`${__dirname}/public`));
-
 app.use((req, res, next) => {
     req.requsetTime = new Date().toISOString();
 
@@ -51,6 +58,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', route);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/reviews', reviewRoute);
 
 
 app.all('*', (req, res, next) => {

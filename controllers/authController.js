@@ -109,14 +109,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
-        // console.log('role',...roles, 'user', req.user);
+        console.log('role',...roles, 'user', req.user);
         if (!roles.includes(req.user.role)) {
             return next(
                 new AppError('You dont have permission to do this action', 403));
         }
         next();
     }
-};
+};  
 
 exports.forgetPassowrd = catchAsync(async (req, res, next) => {
     // Get user based on their email

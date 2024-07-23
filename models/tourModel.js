@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator')
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -101,7 +102,12 @@ const tourSchema = new mongoose.Schema(
         description: String,
         day: Number
       }
-    ]
+    ],
+    // guides: Array,
+    guides: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'User'
+    }]
   }, {
     toJSON: {virtuals: true},
     toObject: {virtuals: true}
@@ -111,6 +117,46 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+
+// Below code is done using lookups also
+
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour'
+});
+
+// tourSchema.pre('save', async function (next)
+// {
+//   this.slug = slugify(this.name, { lower: true });
+//   next();
+// });
+
+// tourSchema.pre('save', async function (next)
+// {
+//   const guidesPromise = this.guides.map(async id => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromise);
+//   next();
+// })
+
+// Query Middleware
+tourSchema.pre(/^find/, function (next)
+{
+  this.find({ secretTour: { $ne: true } });
+
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next)
+{
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt'
+  });
+  next();
+});
+
 
 // Aggregation Middleware
 tourSchema.pre('aggregate', function (next) {
